@@ -6,371 +6,164 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nexo Analytics — Autorización</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <title>Nexo Analytics — Conectando...</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --navy:   #0D1B3E;
-      --teal:   #00838F;
-      --teal-light: #00BCD4;
-      --gold:   #F0A500;
-      --white:  #F5F7FA;
-      --gray:   #8A9BB0;
-      --success:#00C896;
-      --error:  #FF5252;
-    }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--navy);
-      color: var(--white);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Background grid */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(0,131,143,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,131,143,0.06) 1px, transparent 1px);
-      background-size: 48px 48px;
-      pointer-events: none;
-    }
-
-    /* Glow orbs */
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      pointer-events: none;
-      opacity: 0.18;
-    }
-    .orb-1 { width: 500px; height: 500px; background: var(--teal); top: -150px; right: -100px; }
-    .orb-2 { width: 400px; height: 400px; background: #1A237E; bottom: -100px; left: -80px; }
-
-    .card {
-      position: relative;
-      z-index: 10;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(0,131,143,0.25);
-      border-radius: 20px;
-      padding: 48px 52px;
-      max-width: 580px;
-      width: 90%;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 32px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
-      animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(28px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 36px;
-    }
-
-    .logo-icon {
-      width: 42px; height: 42px;
-      background: linear-gradient(135deg, var(--teal), var(--teal-light));
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 18px;
-      color: #fff;
-      letter-spacing: -1px;
-      box-shadow: 0 4px 20px rgba(0,131,143,0.4);
-    }
-
-    .logo-text {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 20px;
-      color: var(--white);
-      letter-spacing: -0.3px;
-    }
-    .logo-text span { color: var(--teal-light); }
-
-    .status-icon {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
-    .status-icon.success { background: rgba(0,200,150,0.12); border: 1.5px solid rgba(0,200,150,0.3); }
-    .status-icon.error   { background: rgba(255,82,82,0.12);  border: 1.5px solid rgba(255,82,82,0.3);  }
-    .status-icon.waiting { background: rgba(0,131,143,0.12);  border: 1.5px solid rgba(0,131,143,0.3);  }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 22px;
-      margin-bottom: 8px;
-      letter-spacing: -0.4px;
-    }
-
-    .subtitle {
-      color: var(--gray);
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 28px;
-    }
-
-    /* Code box */
-    .code-section { display: none; }
-    .code-label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--teal-light);
-      margin-bottom: 8px;
-    }
-
-    .code-box {
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(0,131,143,0.3);
-      border-radius: 10px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .code-value {
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      color: var(--success);
-      word-break: break-all;
-      flex: 1;
-      line-height: 1.5;
-    }
-
-    .copy-btn {
-      background: rgba(0,131,143,0.2);
-      border: 1px solid rgba(0,131,143,0.4);
-      border-radius: 8px;
-      color: var(--teal-light);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 8px 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .copy-btn:hover { background: rgba(0,131,143,0.35); transform: translateY(-1px); }
-    .copy-btn.copied { background: rgba(0,200,150,0.2); border-color: rgba(0,200,150,0.4); color: var(--success); }
-
-    .instruction-box {
-      background: rgba(240,165,0,0.07);
-      border: 1px solid rgba(240,165,0,0.2);
-      border-radius: 10px;
-      padding: 14px 18px;
-      margin-top: 4px;
-    }
-
-    .instruction-box p {
-      font-size: 13px;
-      color: #C8A96E;
-      line-height: 1.6;
-    }
-
-    .instruction-box strong { color: var(--gold); }
-
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .step {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 13px;
-      color: var(--gray);
-      line-height: 1.5;
-    }
-
-    .step-num {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      background: rgba(0,131,143,0.2);
-      border: 1px solid rgba(0,131,143,0.3);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--teal-light);
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0,131,143,0.2), transparent);
-      margin: 28px 0;
-    }
-
-    .footer-note {
-      font-size: 11px;
-      color: rgba(138,155,176,0.6);
-      text-align: center;
-      margin-top: 28px;
-      line-height: 1.5;
-    }
-
-    /* Spinner */
-    .spinner {
-      width: 32px; height: 32px;
-      border: 2px solid rgba(0,131,143,0.2);
-      border-top-color: var(--teal);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 20px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#0D1B3E;--teal:#00838F;--teal-light:#00BCD4;--gold:#F0A500;--white:#F5F7FA;--gray:#8A9BB0;--success:#00C896;--error:#FF5252}
+    body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,131,143,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,131,143,0.06) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+    .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:0.15}
+    .orb-1{width:500px;height:500px;background:var(--teal);top:-150px;right:-100px}
+    .orb-2{width:400px;height:400px;background:#1A237E;bottom:-100px;left:-80px}
+    .card{position:relative;z-index:10;background:rgba(255,255,255,0.04);border:1px solid rgba(0,131,143,0.25);border-radius:20px;padding:48px 52px;max-width:520px;width:90%;backdrop-filter:blur(16px);text-align:center;animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px}
+    .logo-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--teal),var(--teal-light));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#fff}
+    .logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:20px}
+    .logo-text span{color:var(--teal-light)}
+    .status-icon{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px}
+    .icon-loading{background:rgba(0,131,143,0.12);border:1.5px solid rgba(0,131,143,0.3)}
+    .icon-success{background:rgba(0,200,150,0.12);border:1.5px solid rgba(0,200,150,0.3)}
+    .icon-error{background:rgba(255,82,82,0.12);border:1.5px solid rgba(255,82,82,0.3)}
+    h1{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;margin-bottom:10px}
+    .subtitle{color:var(--gray);font-size:14px;line-height:1.6;margin-bottom:24px}
+    .spinner{width:36px;height:36px;border:2px solid rgba(0,131,143,0.2);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 8px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .progress-steps{display:flex;flex-direction:column;gap:10px;margin:20px 0;text-align:left}
+    .step-item{display:flex;align-items:center;gap:12px;font-size:13px}
+    .step-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+    .dot-done{background:rgba(0,200,150,0.2);color:var(--success);border:1px solid rgba(0,200,150,0.3)}
+    .dot-active{background:rgba(0,131,143,0.2);color:var(--teal-light);border:1px solid rgba(0,131,143,0.4)}
+    .dot-wait{background:rgba(138,155,176,0.1);color:var(--gray);border:1px solid rgba(138,155,176,0.2)}
+    .step-text-done{color:var(--success)}
+    .step-text-active{color:var(--white)}
+    .step-text-wait{color:var(--gray)}
+    .success-box{background:rgba(0,200,150,0.07);border:1px solid rgba(0,200,150,0.2);border-radius:12px;padding:16px 20px;margin-top:16px;font-size:13px;color:#A0EDD6;line-height:1.6}
+    .success-box strong{color:var(--success)}
+    .error-box{background:rgba(255,82,82,0.07);border:1px solid rgba(255,82,82,0.2);border-radius:12px;padding:16px 20px;margin-top:16px;font-size:13px;color:#FFAAAA;line-height:1.6}
+    .close-btn{margin-top:20px;background:rgba(0,131,143,0.2);border:1px solid rgba(0,131,143,0.4);border-radius:10px;color:var(--teal-light);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:10px 24px;cursor:pointer;transition:background .2s}
+    .close-btn:hover{background:rgba(0,131,143,0.35)}
+    .footer{font-size:11px;color:rgba(138,155,176,0.5);margin-top:28px}
   </style>
 </head>
 <body>
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
-
-  <div class="card" id="card">
+  <div class="card">
     <div class="logo">
       <div class="logo-icon">N</div>
       <div class="logo-text">Nexo<span>Analytics</span></div>
     </div>
-
-    <!-- Estado: procesando -->
-    <div id="state-loading">
+    <div id="view-loading">
       <div class="spinner"></div>
-      <h1>Procesando autorización...</h1>
-      <p class="subtitle">Estamos capturando los datos de acceso de Mercado Libre.</p>
-    </div>
-
-    <!-- Estado: éxito -->
-    <div id="state-success" style="display:none">
-      <div class="status-icon success">✓</div>
-      <h1>¡Autorización exitosa!</h1>
-      <p class="subtitle">El código de autorización fue capturado. Cópialo y pégalo en el archivo Excel de Nexo Analytics.</p>
-
-      <div class="code-section" id="code-section">
-        <div class="code-label">Código de autorización (code)</div>
-        <div class="code-box">
-          <span class="code-value" id="code-display"></span>
-          <button class="copy-btn" id="copy-btn" onclick="copyCode()">Copiar</button>
+      <h1>Conectando tu cuenta...</h1>
+      <p class="subtitle">Completando la autorización con Mercado Libre de forma segura.</p>
+      <div class="progress-steps">
+        <div class="step-item">
+          <div class="step-dot dot-done" id="dot-1">✓</div>
+          <span class="step-text-done" id="txt-1">Autorización en Mercado Libre completada</span>
+        </div>
+        <div class="step-item">
+          <div class="step-dot dot-active" id="dot-2"><div style="width:10px;height:10px;border:1.5px solid;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite"></div></div>
+          <span class="step-text-active" id="txt-2">Obteniendo token de acceso...</span>
+        </div>
+        <div class="step-item">
+          <div class="step-dot dot-wait" id="dot-3">3</div>
+          <span class="step-text-wait" id="txt-3">Redirigiendo al dashboard</span>
         </div>
       </div>
-
-      <div class="instruction-box">
-        <p>⚡ <strong>Acción requerida:</strong> Regresa al archivo <strong>MLMPAnalytics.xlsm</strong>, ve a la hoja <strong>⚙ Parámetros</strong> y pega este código en la celda <strong>C9</strong>. Luego haz clic en <strong>"OBTENER TOKEN DE ACCESO"</strong>.</p>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="steps">
-        <div class="step"><div class="step-num">1</div><span>Copia el código de arriba con el botón <strong style="color:var(--white)">Copiar</strong></span></div>
-        <div class="step"><div class="step-num">2</div><span>Abre el archivo <strong style="color:var(--white)">MLMPAnalytics.xlsm</strong> en Excel</span></div>
-        <div class="step"><div class="step-num">3</div><span>Ve a la hoja <strong style="color:var(--white)">⚙ Parámetros</strong> → celda <strong style="color:var(--white)">C9</strong></span></div>
-        <div class="step"><div class="step-num">4</div><span>Pega el código y haz clic en <strong style="color:var(--white)">OBTENER TOKEN DE ACCESO</strong></span></div>
-      </div>
     </div>
-
-    <!-- Estado: error -->
-    <div id="state-error" style="display:none">
-      <div class="status-icon error">✕</div>
-      <h1>Autorización cancelada</h1>
-      <p class="subtitle">El usuario canceló el proceso o ocurrió un error en Mercado Libre.</p>
-      <div class="instruction-box">
-        <p>⚠ <strong>Error capturado:</strong> <span id="error-display" style="color:var(--white)"></span></p>
-      </div>
-      <div class="divider"></div>
-      <p class="subtitle">Cierra esta ventana y vuelve a hacer clic en <strong style="color:var(--white)">"GENERAR URL DE AUTORIZACIÓN"</strong> en el archivo Excel para reintentar.</p>
+    <div id="view-success" style="display:none">
+      <div class="status-icon icon-success">✓</div>
+      <h1>¡Cuenta conectada!</h1>
+      <p class="subtitle">Tu cuenta de Mercado Libre quedó vinculada a Nexo Analytics.</p>
+      <div class="success-box"><strong>Redirigiendo en <span id="countdown">3</span> segundos...</strong><br>Si no ocurre automáticamente, cierra esta ventana y regresa a la app.</div>
     </div>
-
-    <div class="footer-note">
-      Nexo Analytics · Conexión segura con Mercado Libre API<br>
-      Este código expira en <strong id="timer" style="color:var(--gold)">10:00</strong> minutos
+    <div id="view-error" style="display:none">
+      <div class="status-icon icon-error">✕</div>
+      <h1>No se pudo conectar</h1>
+      <p class="subtitle">Ocurrió un error al conectar con Mercado Libre.</p>
+      <div class="error-box" id="error-detail"></div>
+      <button class="close-btn" onclick="window.close()">Cerrar esta ventana</button>
     </div>
+    <div class="footer">Nexo Analytics · Conexión cifrada · Mercado Libre API</div>
   </div>
-
   <script>
-    // Parsear parámetros de la URL
-    const params = new URLSearchParams(window.location.search);
-    const code  = params.get('code');
-    const error = params.get('error');
-    const errorDesc = params.get('error_description');
-
-    // Timer de cuenta regresiva (10 min)
-    let seconds = 600;
-    const timerEl = document.getElementById('timer');
-    const countdown = setInterval(() => {
-      seconds--;
-      if (seconds <= 0) { clearInterval(countdown); timerEl.textContent = 'EXPIRADO'; timerEl.style.color = 'var(--error)'; return; }
-      const m = Math.floor(seconds / 60).toString().padStart(2,'0');
-      const s = (seconds % 60).toString().padStart(2,'0');
-      timerEl.textContent = `${m}:${s}`;
-      if (seconds <= 60) timerEl.style.color = 'var(--error)';
-    }, 1000);
-
-    // Mostrar estado correcto
-    setTimeout(() => {
-      document.getElementById('state-loading').style.display = 'none';
-
-      if (code) {
-        document.getElementById('state-success').style.display = 'block';
-        document.getElementById('code-display').textContent = code;
-        document.getElementById('code-section').style.display = 'block';
-        // Auto-copiar al portapapeles
-        navigator.clipboard.writeText(code).catch(() => {});
-      } else if (error) {
-        document.getElementById('state-error').style.display = 'block';
-        document.getElementById('error-display').textContent =
-          errorDesc ? decodeURIComponent(errorDesc.replace(/\+/g,' ')) : error;
-        document.getElementById('timer').parentElement.style.display = 'none';
-      } else {
-        // Página visitada directamente sin parámetros
-        document.getElementById('state-success').style.display = 'block';
-        document.getElementById('code-section').style.display = 'none';
-        document.querySelector('#state-success h1').textContent = 'Página de callback activa';
-        document.querySelector('#state-success .subtitle').textContent =
-          'Esta página está configurada correctamente como Redirect URI en Mercado Libre. Cuando el cliente autorice el acceso, el código aparecerá aquí automáticamente.';
-        document.querySelector('.instruction-box').style.display = 'none';
-        document.querySelector('.divider').style.display = 'none';
-        document.querySelector('.steps').style.display = 'none';
-        document.getElementById('timer').parentElement.style.display = 'none';
+    const WORKER_URL = 'https://nexo-ml-auth.tp-jscaro.workers.dev';
+    const APP_URL    = 'https://nexoanalytics.github.io';
+    const params     = new URLSearchParams(window.location.search);
+    const code       = params.get('code');
+    const error      = params.get('error');
+    const errorDesc  = params.get('error_description');
+ 
+    async function run() {
+      if (error) {
+        show('error', (errorDesc ? decodeURIComponent(errorDesc.replace(/\+/g,' ')) : error));
+        return;
       }
-    }, 900);
-
-    function copyCode() {
-      const code = document.getElementById('code-display').textContent;
-      navigator.clipboard.writeText(code).then(() => {
-        const btn = document.getElementById('copy-btn');
-        btn.textContent = '✓ Copiado';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2500);
-      });
+      if (!code) {
+        show('error', 'No se recibió código de autorización. Intenta de nuevo desde la app.');
+        return;
+      }
+      const clientId     = sessionStorage.getItem('na_client_id') || '';
+      const clientSecret = sessionStorage.getItem('na_client_secret') || '';
+      if (!clientId || !clientSecret) {
+        sessionStorage.setItem('na_auth_code', code);
+        stepDone(2, 'Código recibido');
+        stepActive(3, 'Redirigiendo a la app...');
+        setTimeout(() => { window.location.href = APP_URL + '?auth_code=' + encodeURIComponent(code); }, 800);
+        return;
+      }
+      try {
+        const resp = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({
+            grant_type: 'authorization_code',
+            client_id: clientId,
+            client_secret: clientSecret,
+            code: code,
+            redirect_uri: 'https://nexoanalytics.github.io/callback'
+          })
+        });
+        const data = await resp.json();
+        if (data.access_token) {
+          sessionStorage.setItem('na_access_token',  data.access_token);
+          sessionStorage.setItem('na_refresh_token', data.refresh_token || '');
+          sessionStorage.setItem('na_user_id',       String(data.user_id || ''));
+          stepDone(2, 'Token obtenido');
+          stepActive(3, 'Redirigiendo al dashboard...');
+          document.getElementById('view-loading').style.display = 'none';
+          document.getElementById('view-success').style.display = 'block';
+          let s = 3;
+          const cd = document.getElementById('countdown');
+          const t = setInterval(() => {
+            s--; if(cd) cd.textContent = s;
+            if(s <= 0){ clearInterval(t); window.location.href = APP_URL + '?auth=ok&user_id=' + data.user_id; }
+          }, 1000);
+        } else {
+          throw new Error(data.message || data.error || JSON.stringify(data));
+        }
+      } catch(e) { show('error', e.message); }
     }
+ 
+    function show(type, msg) {
+      document.getElementById('view-loading').style.display = 'none';
+      document.getElementById('view-' + type).style.display = 'block';
+      if (type === 'error') document.getElementById('error-detail').innerHTML = '<strong>Error:</strong> ' + msg;
+    }
+    function stepDone(n, t) {
+      const d = document.getElementById('dot-'+n), x = document.getElementById('txt-'+n);
+      if(d){ d.className='step-dot dot-done'; d.innerHTML='✓'; }
+      if(x){ x.className='step-text-done'; if(t) x.textContent=t; }
+    }
+    function stepActive(n, t) {
+      const d = document.getElementById('dot-'+n), x = document.getElementById('txt-'+n);
+      if(d){ d.className='step-dot dot-active'; d.innerHTML='<div style="width:10px;height:10px;border:1.5px solid;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite"></div>'; }
+      if(x){ x.className='step-text-active'; if(t) x.textContent=t; }
+    }
+    run();
   </script>
 </body>
 </html>
