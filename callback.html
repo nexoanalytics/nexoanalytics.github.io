@@ -96,7 +96,7 @@
     const code       = params.get('code');
     const error      = params.get('error');
     const errorDesc  = params.get('error_description');
- 
+
     async function run() {
       if (error) {
         show('error', (errorDesc ? decodeURIComponent(errorDesc.replace(/\+/g,' ')) : error));
@@ -147,7 +147,7 @@
         }
       } catch(e) { show('error', e.message); }
     }
- 
+
     function show(type, msg) {
       document.getElementById('view-loading').style.display = 'none';
       document.getElementById('view-' + type).style.display = 'block';
