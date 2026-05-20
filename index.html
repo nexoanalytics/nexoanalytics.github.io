@@ -5,29 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="X-Frame-Options" content="DENY">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; connect-src https://nexo-ml-auth.tp-jscaro.workers.dev; frame-ancestors 'none';">
+<!--
+  NOTA SEGURIDAD: X-Frame-Options y frame-ancestors DEBEN enviarse como
+  headers HTTP desde el servidor (GitHub Pages o Cloudflare). No funcionan
+  en <meta>. Se eliminaron los meta tags incorrectos. El Worker ya los envía.
+  SRI temporalmente desactivado — hashes de cdnjs no coinciden con la versión
+  publicada. Se compensa con CSP estricta de connect-src.
+-->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com 'unsafe-inline';
+  style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+  font-src https://fonts.gstatic.com;
+  connect-src https://nexo-ml-auth.tp-jscaro.workers.dev;
+  img-src 'self' data:;
+  frame-ancestors 'none';
+">
 <title>Nexo Analytics — Inteligencia para vender mejor</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2300838F'/><text y='22' x='6' font-size='18' font-weight='bold' fill='white' font-family='Arial'>N</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<!-- SRI: hashes garantizan integridad de scripts externos (OWASP A06) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
-  integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3oD+sCoJrzXJ+yKjtkTa3kvARFAAlGCkVumb2wEkArkxjXjR8cQfQ=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
-  integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9A=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
 <style>
 :root{
   --navy:#0B1628;--navy-mid:#0D1F3C;--navy-light:#132847;
-  --teal:#00838F;--teal-b:#00BCD4;--teal-glow:rgba(0,188,212,0.15);
+  --teal:#00838F;--teal-b:#00BCD4;--teal-glow:rgba(0,188,212,.15);
   --gold:#E8A020;--white:#F0F4FA;--gray:#7B8EAB;--gray-light:#A8BACC;
-  --success:#00C896;--danger:#E05252;--border:rgba(0,131,143,0.18);
+  --success:#00C896;--danger:#E05252;--border:rgba(0,131,143,.18);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:56px 56px;pointer-events:none}
 .orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0}
-.orb-1{width:600px;height:600px;background:radial-gradient(circle,rgba(0,131,143,0.22),transparent 70%);top:-200px;right:-100px}
+.orb-1{width:600px;height:600px;background:radial-gradient(circle,rgba(0,131,143,.22),transparent 70%);top:-200px;right:-100px}
 .orb-2{width:500px;height:500px;background:radial-gradient(circle,rgba(13,31,60,.8),transparent 70%);bottom:-150px;left:-100px}
 .app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 80px}
 .header{display:flex;align-items:center;justify-content:space-between;padding:28px 0 24px;flex-wrap:wrap;gap:12px;border-bottom:.5px solid var(--border);margin-bottom:32px}
@@ -44,7 +54,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
 .dot-pulse{animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:13px;font-weight:500;border:.5px solid;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:13px;font-weight:500;border:.5px solid;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .btn-ghost{background:rgba(255,255,255,.05);color:var(--gray-light);border-color:var(--border)}
 .btn-ghost:hover{background:rgba(255,255,255,.09);color:var(--white)}
 .btn-primary{background:linear-gradient(135deg,var(--teal),#006E7A);color:#fff;border-color:var(--teal)}
@@ -68,40 +78,54 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear
 .alert-err{background:rgba(224,82,82,.1);color:#FFAAAA;border-color:rgba(224,82,82,.25)}
 .alert-ok{background:rgba(0,200,150,.1);color:#A0EDD6;border-color:rgba(0,200,150,.25)}
 .alert-info{background:rgba(0,131,143,.1);color:var(--teal-b);border-color:rgba(0,131,143,.25)}
-.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-.preset{font-size:12px;padding:5px 12px;border-radius:100px;border:.5px solid var(--border);background:rgba(255,255,255,.04);color:var(--gray);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+/* Segmentadores */
+.period-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:0}
+.preset{font-size:12px;padding:6px 14px;border-radius:100px;border:.5px solid var(--border);background:rgba(255,255,255,.04);color:var(--gray);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
 .preset:hover{border-color:var(--teal);color:var(--teal-b)}
 .preset.on{background:var(--teal);color:#fff;border-color:var(--teal)}
-.dates-row{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;align-items:end}
-@media(max-width:640px){.dates-row{grid-template-columns:1fr 1fr}}
+.date-range{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.date-range.show{display:grid}
+.field-label{font-size:12px;color:var(--gray);margin-bottom:4px;font-weight:500}
 input[type=date],input[type=text]{width:100%;background:var(--navy-light);border:.5px solid var(--border);border-radius:8px;color:var(--white);font-size:13px;font-family:'DM Sans',sans-serif;padding:9px 13px;outline:none;transition:border-color .2s}
 input:focus{border-color:var(--teal-b);box-shadow:0 0 0 3px rgba(0,188,212,.1)}
 input::placeholder{color:var(--gray);opacity:.6}
-.field-label{font-size:12px;color:var(--gray);margin-bottom:5px;font-weight:500}
+/* Tabs de vista */
+.view-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.vtab{font-size:12px;padding:7px 16px;border-radius:8px;border:.5px solid var(--border);background:rgba(255,255,255,.04);color:var(--gray);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;font-weight:500}
+.vtab:hover{border-color:var(--teal);color:var(--teal-b)}
+.vtab.on{background:var(--navy-light);border-color:var(--teal-b);color:var(--teal-b)}
+.view-panel{display:none}
+.view-panel.on{display:block}
+/* KPIs */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
 .kpi{background:var(--navy-light);border:.5px solid var(--border);border-radius:13px;padding:18px 20px;position:relative;overflow:hidden}
 .kpi::after{content:'';position:absolute;top:0;right:0;width:80px;height:80px;background:radial-gradient(circle at top right,var(--teal-glow),transparent 70%)}
 .kpi-label{font-size:11px;color:var(--gray);margin-bottom:8px;font-weight:500;letter-spacing:.03em}
-.kpi-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;letter-spacing:-.5px}
+.kpi-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;letter-spacing:-.5px}
 .kpi-sub{font-size:11px;color:var(--gray);margin-top:4px}
 .kpi-pos{color:var(--success)}.kpi-neg{color:var(--danger)}
+/* Grids */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 @media(max-width:700px){.two-col{grid-template-columns:1fr}}
-.bar-row{margin-bottom:16px}
-.bar-meta{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.bar-row{margin-bottom:14px}
+.bar-meta{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
 .bar-meta-label{color:var(--white);font-weight:500}.bar-meta-val{color:var(--gray)}
 .bar-bg{background:var(--navy);border-radius:100px;overflow:hidden;height:6px}
 .bar-fill{height:6px;border-radius:100px;background:linear-gradient(90deg,var(--teal),var(--teal-b));transition:width .6s cubic-bezier(.34,1.56,.64,1)}
 .chart-wrap{position:relative;width:100%;height:220px}
+/* Tabla */
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{text-align:left;padding:9px 12px;border-bottom:.5px solid var(--border);color:var(--gray);font-weight:500;font-size:11px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
-td{padding:9px 12px;border-bottom:.5px solid rgba(255,255,255,.04);color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+td{padding:8px 12px;border-bottom:.5px solid rgba(255,255,255,.04);color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,.03)}
 .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:100px;font-weight:500}
 .tag-ok{background:rgba(0,200,150,.12);color:var(--success)}
 .tag-warn{background:rgba(232,160,32,.12);color:#F5C842}
+.tag-err{background:rgba(224,82,82,.12);color:var(--danger)}
+/* Estado vacío */
+.empty-state{text-align:center;padding:40px 20px;color:var(--gray);font-size:13px}
 #dash{display:none}
 #view-periodo{display:none}
 </style>
@@ -110,6 +134,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 <div class="app">
+
   <header class="header">
     <div class="logo">
       <div class="logo-mark">N</div>
@@ -127,11 +152,12 @@ tr:hover td{background:rgba(255,255,255,.03)}
 
   <div id="alert" class="alert"></div>
 
+  <!-- PANTALLA CONECTAR -->
   <div class="card" id="view-connect">
     <div class="connect-screen">
       <div class="connect-glyph">🛒</div>
       <h2>Conecta tu cuenta de Mercado Libre</h2>
-      <p>Nexo Analytics analiza tus ventas, comisiones, envíos y publicidad. El acceso es de solo lectura. Tus credenciales nunca se almacenan en nuestros servidores — solo en Mercado Libre.</p>
+      <p>Nexo Analytics analiza tus ventas, comisiones, envíos y publicidad. Solo lectura — tus credenciales nunca se almacenan en nuestros servidores.</p>
       <button class="btn btn-primary btn-lg" onclick="iniciarOAuth()">🔒 Conectar con Mercado Libre</button>
       <div class="trust-row">
         <div class="trust-item">🔐 Solo lectura</div>
@@ -141,41 +167,81 @@ tr:hover td{background:rgba(255,255,255,.03)}
     </div>
   </div>
 
+  <!-- PERÍODO -->
   <div class="card" id="view-periodo">
     <div class="card-title">Período de análisis</div>
-    <div class="presets">
-      <button class="preset" onclick="setP('mes',this)">Este mes</button>
-      <button class="preset" onclick="setP('mes-ant',this)">Mes anterior</button>
-      <button class="preset on" onclick="setP('q1-25',this)">Q1 2025</button>
-      <button class="preset" onclick="setP('q2-25',this)">Q2 2025</button>
-      <button class="preset" onclick="setP('q3-25',this)">Q3 2025</button>
-      <button class="preset" onclick="setP('q4-25',this)">Q4 2025</button>
-      <button class="preset" onclick="setP('anio',this)">2025 completo</button>
+    <div class="period-bar">
+      <button class="preset on" data-p="mes-ant" onclick="setP(this)">Mes anterior</button>
+      <button class="preset" data-p="custom" onclick="setP(this)">Personalizado</button>
+      <div style="flex:1"></div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <div id="max-wrap">
+          <div class="field-label">Máx. órdenes</div>
+          <input type="text" id="inp-max" value="500" style="width:90px" maxlength="4" pattern="[0-9]*">
+        </div>
+        <button class="btn btn-primary" onclick="sincronizar()">⟳ Obtener datos</button>
+      </div>
     </div>
-    <div class="dates-row">
-      <div><div class="field-label">Fecha inicio</div><input type="date" id="inp-ini" value="2025-01-01"></div>
-      <div><div class="field-label">Fecha fin</div><input type="date" id="inp-fin" value="2025-03-31"></div>
-      <div><div class="field-label">Máx.</div><input type="text" id="inp-max" value="500" style="width:80px" maxlength="4" pattern="[0-9]*"></div>
-      <div style="padding-bottom:1px"><button class="btn btn-primary" style="width:100%" onclick="sincronizar()">⟳ Obtener datos</button></div>
+    <div class="date-range" id="date-range">
+      <div>
+        <div class="field-label">Fecha inicio</div>
+        <input type="date" id="inp-ini">
+      </div>
+      <div>
+        <div class="field-label">Fecha fin</div>
+        <input type="date" id="inp-fin">
+      </div>
     </div>
+    <div id="period-label" style="font-size:12px;color:var(--gray);margin-top:10px"></div>
   </div>
 
+  <!-- DASHBOARD -->
   <div id="dash">
+    <!-- KPIs globales -->
     <div class="kpi-grid" id="kpis"></div>
-    <div class="two-col">
-      <div class="card" style="margin:0">
-        <div class="card-title">Costos de plataforma</div>
-        <div id="costos"></div>
+
+    <!-- Tabs de vista -->
+    <div class="view-tabs">
+      <button class="vtab on" onclick="showView('ventas',this)">📋 Vista por venta</button>
+      <button class="vtab" onclick="showView('productos',this)">📦 Vista por producto</button>
+    </div>
+
+    <!-- VISTA POR VENTA -->
+    <div class="view-panel on" id="view-ventas">
+      <div class="two-col">
+        <div class="card" style="margin:0">
+          <div class="card-title">Costos de plataforma</div>
+          <div id="costos"></div>
+        </div>
+        <div class="card" style="margin:0">
+          <div class="card-title">Ventas brutas por semana</div>
+          <div class="chart-wrap"><canvas id="chart-s" aria-label="Ventas semanales"></canvas></div>
+        </div>
       </div>
-      <div class="card" style="margin:0">
-        <div class="card-title">Ventas brutas por semana</div>
-        <div class="chart-wrap"><canvas id="chart-s" aria-label="Gráfica de ventas semanales"></canvas></div>
+      <div class="card">
+        <div class="card-title">Detalle de órdenes</div>
+        <div class="tbl-wrap" id="tabla-ventas"></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">Detalle de órdenes</div>
-      <div class="tbl-wrap" id="tabla"></div>
+
+    <!-- VISTA POR PRODUCTO -->
+    <div class="view-panel" id="view-productos">
+      <div class="two-col">
+        <div class="card" style="margin:0">
+          <div class="card-title">Top productos por ingreso neto</div>
+          <div class="chart-wrap"><canvas id="chart-prod" aria-label="Top productos"></canvas></div>
+        </div>
+        <div class="card" style="margin:0">
+          <div class="card-title">Distribución de costos por producto</div>
+          <div id="prod-costos"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Resumen por producto</div>
+        <div class="tbl-wrap" id="tabla-productos"></div>
+      </div>
     </div>
+
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
       <button class="btn btn-success" onclick="exportar()">📥 Descargar Excel</button>
     </div>
@@ -183,41 +249,96 @@ tr:hover td{background:rgba(255,255,255,.03)}
 </div>
 
 <script>
-/* SEGURIDAD (OWASP A02): Configuración centralizada sin credenciales.
-   App ID y Secret Key viven en Cloudflare Workers como variables de entorno.
-   El navegador NUNCA los maneja. */
 const CFG = { WORKER: 'https://nexo-ml-auth.tp-jscaro.workers.dev' };
-
-/* Estado: NUNCA almacena tokens ML.
-   Solo guarda session_id firmado con HMAC (inútil sin el Worker) y user_id. */
 let S = { sid:'', uid:'', ordenes:[] };
-let chartI = null;
+let charts = {};
+// Rango activo
+let rango = { tipo:'mes-ant', ini:'', fin:'' };
 
 const $    = id => document.getElementById(id);
-const show = id => $(id).style.display = 'block';
-const hide = id => $(id).style.display = 'none';
+const show = id => $(id).style.display='block';
+const hide = id => $(id).style.display='none';
 const fmt  = v  => '$'+parseFloat(v||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtP = v  => parseFloat(v||0).toFixed(1)+'%';
-
-/* SEGURIDAD (OWASP A03): Escapar HTML para prevenir XSS al renderizar datos de ML */
-const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+const esc  = s  => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
 
 function showAlert(msg, type){
-  const el = $('alert');
-  el.className = 'alert alert-'+(type||'err');
-  el.textContent = msg; // textContent en vez de innerHTML — previene XSS
-  el.style.display = 'block';
-  if(type==='ok'||type==='info') setTimeout(()=>el.style.display='none', 4000);
+  const el=$('alert');
+  el.className='alert alert-'+(type||'err');
+  el.textContent=msg;
+  el.style.display='block';
+  if(type==='ok'||type==='info') setTimeout(()=>el.style.display='none',4000);
 }
 
 function setPill(st){
-  const el = $('auth-pill');
+  const el=$('auth-pill');
   if(st==='ok'){ el.className='pill pill-ok'; el.innerHTML='<span class="dot dot-pulse"></span>Conectado'; }
   else if(st==='err'){ el.className='pill pill-err'; el.innerHTML='<span class="dot"></span>Error'; }
   else { el.className='pill pill-neutral'; el.innerHTML='<span class="dot"></span>Sin conectar'; }
 }
 
-/* ── OAUTH: el cliente solo hace clic ──────────────────────────────────────── */
+/* ── SEGMENTADORES ──────────────────────────────────────────────────────────
+   Solo dos opciones: Mes anterior | Personalizado                          */
+function calcMesAnterior(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth(); // mes actual 0-indexed → mes anterior = m-1
+  const ini = new Date(y, m-1, 1);
+  const fin = new Date(y, m, 0); // último día del mes anterior
+  return {
+    ini: ini.toISOString().slice(0,10),
+    fin: fin.toISOString().slice(0,10),
+    label: ini.toLocaleString('es-MX',{month:'long',year:'numeric'})
+  };
+}
+
+function setP(el){
+  document.querySelectorAll('.preset').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  rango.tipo = el.dataset.p;
+  if(rango.tipo === 'mes-ant'){
+    const ma = calcMesAnterior();
+    rango.ini = ma.ini;
+    rango.fin = ma.fin;
+    $('date-range').classList.remove('show');
+    $('period-label').textContent = `Período: ${ma.label}`;
+  } else {
+    // Personalizado: mostrar inputs de fecha
+    $('date-range').classList.add('show');
+    // Defaults: mes anterior como punto de partida
+    const ma = calcMesAnterior();
+    $('inp-ini').value = $('inp-ini').value || ma.ini;
+    $('inp-fin').value = $('inp-fin').value || ma.fin;
+    rango.ini = $('inp-ini').value;
+    rango.fin = $('inp-fin').value;
+    $('period-label').textContent='';
+  }
+}
+
+// Inicializar segmentador en mes anterior
+function initPeriod(){
+  const ma = calcMesAnterior();
+  rango = { tipo:'mes-ant', ini:ma.ini, fin:ma.fin };
+  $('period-label').textContent = `Período: ${ma.label}`;
+}
+
+// Actualizar rango desde inputs de fecha personalizados
+$('inp-ini') && document.addEventListener('change', e=>{
+  if(e.target.id==='inp-ini'||e.target.id==='inp-fin'){
+    rango.ini = $('inp-ini').value;
+    rango.fin = $('inp-fin').value;
+  }
+});
+
+/* ── VISTAS ─────────────────────────────────────────────────────────────── */
+function showView(name, el){
+  document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.view-panel').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  $('view-'+name).classList.add('on');
+}
+
+/* ── OAUTH ──────────────────────────────────────────────────────────────── */
 async function iniciarOAuth(){
   showAlert('Preparando conexión segura...','info');
   try {
@@ -226,14 +347,12 @@ async function iniciarOAuth(){
     const d = await r.json();
     if(!d.url) throw new Error('invalid_response');
     sessionStorage.setItem('na_oauth_pending','1');
-    /* noopener,noreferrer: previene que la ventana nueva acceda a window.opener */
-    window.open(d.url, '_blank', 'noopener,noreferrer');
+    window.open(d.url,'_blank','noopener,noreferrer');
     showAlert('Se abrió Mercado Libre. Inicia sesión y aprueba el acceso.','info');
     setTimeout(revisarSession, 2000);
   } catch(e){
-    /* SEGURIDAD: no exponer detalles técnicos al usuario */
-    showAlert('No se pudo conectar. Intenta de nuevo en unos momentos.','err');
-    console.error('[NexoAnalytics] OAuth init:', e.message);
+    showAlert('No se pudo conectar. Intenta de nuevo.','err');
+    console.error('[NA] OAuth:', e.message);
   }
 }
 
@@ -249,30 +368,25 @@ function revisarSession(){
 async function intercambiarToken(code){
   showAlert('Completando conexión...','info');
   try {
-    const r = await fetch(CFG.WORKER, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      /* SEGURIDAD: solo enviamos el code — las credenciales las maneja el Worker */
+    const r = await fetch(CFG.WORKER,{
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({grant_type:'authorization_code', code})
     });
     const d = await r.json();
     if(d.session_id){
-      /* SEGURIDAD: solo guardamos session_id firmado y user_id — NUNCA el token ML */
-      S.sid = d.session_id;
-      S.uid = String(d.user_id||'');
-      sessionStorage.setItem('na_sid', S.sid);
-      sessionStorage.setItem('na_uid', S.uid);
+      S.sid=d.session_id; S.uid=String(d.user_id||'');
+      sessionStorage.setItem('na_sid',S.sid);
+      sessionStorage.setItem('na_uid',S.uid);
       sessionStorage.removeItem('na_oauth_pending');
       conectado();
     } else {
-      showAlert(d.error||'No se pudo completar la conexión. Intenta de nuevo.','err');
+      showAlert(d.error||'No se pudo completar la conexión.','err');
       setPill('err');
       sessionStorage.removeItem('na_oauth_pending');
     }
   } catch(e){
-    showAlert('Error de red. Verifica tu conexión e intenta de nuevo.','err');
+    showAlert('Error de red. Verifica tu conexión.','err');
     setPill('err');
-    console.error('[NexoAnalytics] Token exchange:', e.message);
   }
 }
 
@@ -281,48 +395,33 @@ function conectado(){
   setPill('ok');
   $('btn-dc').style.display='inline-flex';
   $('alert').style.display='none';
+  initPeriod();
 }
 
 function desconectar(){
   if(!confirm('¿Desconectar tu cuenta de Mercado Libre?')) return;
-  S = {sid:'', uid:'', ordenes:[]};
-  sessionStorage.clear(); /* limpiar todo al desconectar */
+  S={sid:'',uid:'',ordenes:[]};
+  sessionStorage.clear();
+  Object.values(charts).forEach(c=>c&&c.destroy());
+  charts={};
   setPill('neutral');
   hide('view-periodo'); hide('dash');
   $('btn-dc').style.display='none';
   show('view-connect');
 }
 
-/* ── PERÍODO ─────────────────────────────────────────────────────────────── */
-function setP(p, el){
-  document.querySelectorAll('.preset').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');
-  const now=new Date(), y=now.getFullYear(), m=String(now.getMonth()+1).padStart(2,'0');
-  const ld=new Date(y,now.getMonth()+1,0).getDate();
-  const pm=String(now.getMonth()).padStart(2,'0');
-  const pld=new Date(y,now.getMonth(),0).getDate();
-  const map={
-    'mes':[`${y}-${m}-01`,`${y}-${m}-${ld}`],
-    'mes-ant':[`${y}-${pm}-01`,`${y}-${pm}-${pld}`],
-    'q1-25':['2025-01-01','2025-03-31'], 'q2-25':['2025-04-01','2025-06-30'],
-    'q3-25':['2025-07-01','2025-09-30'], 'q4-25':['2025-10-01','2025-12-31'],
-    'anio':['2025-01-01','2025-12-31']
-  };
-  const [i,f]=map[p]||[null,null];
-  if(i) $('inp-ini').value=i;
-  if(f) $('inp-fin').value=f;
-}
-
-/* ── PROXY API: todas las llamadas a ML van por el Worker ─────────────────
-   SEGURIDAD (OWASP A02): el token ML nunca toca el navegador              */
+/* ── PROXY API ──────────────────────────────────────────────────────────── */
 async function mlCall(path, params){
-  const r = await fetch(CFG.WORKER+'/api', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
+  const r = await fetch(CFG.WORKER+'/api',{
+    method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({session_id:S.sid, ml_path:path, ml_params:params})
   });
   const d = await r.json();
-  if(r.status===401){ showAlert('Tu sesión expiró. Por favor reconecta tu cuenta.','err'); setPill('err'); throw new Error('SESSION_EXPIRED'); }
+  if(r.status===401){
+    showAlert('Tu sesión expiró. Por favor reconecta tu cuenta.','err');
+    setPill('err');
+    throw new Error('SESSION_EXPIRED');
+  }
   if(!r.ok) throw new Error(d.error||'api_error');
   return d;
 }
@@ -331,16 +430,28 @@ async function mlCall(path, params){
 async function sincronizar(){
   if(!S.sid){ showAlert('Conecta tu cuenta primero.','err'); return; }
 
-  /* SEGURIDAD (OWASP A03): validar entradas del usuario */
-  const fi=$('inp-ini').value, ff=$('inp-fin').value;
-  const dateRx=/^\d{4}-\d{2}-\d{2}$/;
-  if(!fi||!ff||!dateRx.test(fi)||!dateRx.test(ff)){ showAlert('Formato de fecha inválido.','err'); return; }
-  if(new Date(fi)>new Date(ff)){ showAlert('La fecha inicio debe ser anterior a la fecha fin.','err'); return; }
-  const maxR = Math.min(Math.max(parseInt($('inp-max').value)||500, 1), 2000);
+  // Leer fechas según modo
+  let fi, ff;
+  if(rango.tipo==='mes-ant'){
+    fi=rango.ini; ff=rango.fin;
+  } else {
+    fi=$('inp-ini').value; ff=$('inp-fin').value;
+  }
 
-  showAlert('⟳ Obteniendo datos de Mercado Libre...','info');
+  // Validar fechas
+  const dateRx=/^\d{4}-\d{2}-\d{2}$/;
+  if(!fi||!ff||!dateRx.test(fi)||!dateRx.test(ff)){
+    showAlert('Formato de fecha inválido.','err'); return;
+  }
+  if(new Date(fi)>new Date(ff)){
+    showAlert('La fecha inicio debe ser anterior a la fecha fin.','err'); return;
+  }
+
+  const maxR=Math.min(Math.max(parseInt($('inp-max').value)||500,1),2000);
+  showAlert('⟳ Obteniendo órdenes de Mercado Libre...','info');
   hide('dash'); S.ordenes=[];
   let offset=0, total=9999;
+
   try {
     while(S.ordenes.length<maxR && offset<total){
       const d = await mlCall('/orders/search',{
@@ -355,11 +466,17 @@ async function sincronizar(){
       offset+=50;
       if(total===0) break;
     }
-    if(!S.ordenes.length){ showAlert('No se encontraron órdenes en el período seleccionado.','err'); return; }
+    if(!S.ordenes.length){
+      showAlert('No se encontraron órdenes en el período seleccionado.','err');
+      return;
+    }
     $('alert').style.display='none';
+    // Guardar rango activo para el resumen de producto
+    S.rango = {fi, ff};
     renderDash();
   } catch(e){
-    if(e.message!=='SESSION_EXPIRED') showAlert('No se pudieron obtener los datos. Intenta de nuevo.','err');
+    if(e.message!=='SESSION_EXPIRED')
+      showAlert('No se pudieron obtener los datos. Intenta de nuevo.','err');
   }
 }
 
@@ -376,12 +493,16 @@ function renderDash(){
   let coms=0,iva=0,envios=0;
   paid.forEach(o=>{
     const {com,iva:i}=comision(o.order_items?.[0]?.listing_type_id||'gold_premium',o.total_amount||0);
-    coms+=com; iva+=i; envios+=(o.shipping?.cost||0);
+    coms+=com; iva+=i;
+    // Costo de envío: en ML viene como shipping_amount en la orden
+    envios+=(o.shipping_amount||o.shipping?.cost||0);
   });
-  const totalC=coms+iva+envios, neto=ventas-totalC;
+  const totalC=coms+iva+envios;
+  const neto=ventas-totalC;
   const margen=ventas>0?(neto/ventas)*100:0;
   const ticket=paid.length>0?ventas/paid.length:0;
 
+  // KPIs globales
   $('kpis').innerHTML=`
     <div class="kpi"><div class="kpi-label">VENTAS BRUTAS</div><div class="kpi-val">${fmt(ventas)}</div><div class="kpi-sub">${paid.length} órdenes pagadas</div></div>
     <div class="kpi"><div class="kpi-label">COSTOS PLATAFORMA</div><div class="kpi-val kpi-neg">${fmt(totalC)}</div><div class="kpi-sub">${fmtP(ventas>0?totalC/ventas*100:0)} de ventas</div></div>
@@ -389,6 +510,14 @@ function renderDash(){
     <div class="kpi"><div class="kpi-label">MARGEN NETO</div><div class="kpi-val ${margen>=0?'kpi-pos':'kpi-neg'}">${fmtP(margen)}</div><div class="kpi-sub">Ticket promedio ${fmt(ticket)}</div></div>
   `;
 
+  renderVentas(paid, ventas, coms, iva, envios);
+  renderProductos(paid);
+  show('dash');
+  $('dash').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── VISTA POR VENTA ────────────────────────────────────────────────────── */
+function renderVentas(paid, ventas, coms, iva, envios){
   const maxC=Math.max(coms,iva,envios)||1;
   $('costos').innerHTML=[
     {l:'Comisiones ML',v:coms,p:ventas>0?coms/ventas:0},
@@ -399,6 +528,7 @@ function renderDash(){
     <div class="bar-bg"><div class="bar-fill" style="width:${Math.min(c.v/maxC*100,100).toFixed(1)}%"></div></div>
   </div>`).join('');
 
+  // Gráfica semanal
   const wk={};
   paid.forEach(o=>{
     const d=new Date(o.date_created);
@@ -407,18 +537,19 @@ function renderDash(){
     wk[k]=(wk[k]||0)+(o.total_amount||0);
   });
   const wks=Object.keys(wk).sort();
-  if(chartI) chartI.destroy();
-  chartI=new Chart($('chart-s'),{
+  if(charts.semanas) charts.semanas.destroy();
+  charts.semanas=new Chart($('chart-s'),{
     type:'bar',
     data:{labels:wks,datasets:[{label:'Ventas',data:wks.map(k=>parseFloat(wk[k].toFixed(2))),backgroundColor:'rgba(0,131,143,.6)',borderColor:'rgba(0,188,212,.8)',borderWidth:1,borderRadius:4}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmt(c.raw)}}},scales:{y:{ticks:{color:'#7B8EAB',callback:v=>'$'+v.toLocaleString('es-MX')},grid:{color:'rgba(255,255,255,.05)'}},x:{ticks:{color:'#7B8EAB',autoSkip:true,maxRotation:45,font:{size:10}},grid:{display:false}}}}
   });
 
-  /* SEGURIDAD (OWASP A03): escapar TODOS los datos de ML antes de inyectar en DOM */
+  // Tabla de órdenes
   const rows=paid.slice(0,200).map(o=>{
     const lt=o.order_items?.[0]?.listing_type_id||'gold_premium';
     const {pct,com,iva:i}=comision(lt,o.total_amount||0);
-    const n=(o.total_amount||0)-com-i;
+    const env_cost=o.shipping_amount||o.shipping?.cost||0;
+    const n=(o.total_amount||0)-com-i-env_cost;
     return `<tr>
       <td style="font-size:11px;font-family:monospace">${esc(o.id)}</td>
       <td>${esc(o.date_created?.slice(0,10)||'—')}</td>
@@ -426,24 +557,112 @@ function renderDash(){
       <td style="text-align:right">${esc(String(o.order_items?.[0]?.quantity||0))}</td>
       <td style="text-align:right">${fmt(o.total_amount||0)}</td>
       <td style="text-align:right;color:#E05252">${fmt(com+i)}</td>
+      <td style="text-align:right;color:#7B8EAB">${fmt(env_cost)}</td>
       <td style="text-align:right;color:#00C896">${fmt(n)}</td>
       <td><span class="tag ${n>=0?'tag-ok':'tag-warn'}">${fmtP(pct*100)}</span></td>
     </tr>`;
   }).join('');
-
-  $('tabla').innerHTML=`
+  $('tabla-ventas').innerHTML=`
     <table>
       <thead><tr>
         <th>ID ORDEN</th><th>FECHA</th><th>PRODUCTO</th>
         <th style="text-align:right">QTY</th><th style="text-align:right">VENTA</th>
-        <th style="text-align:right">COSTO</th><th style="text-align:right">NETO</th><th>%</th>
+        <th style="text-align:right">COMISIÓN+IVA</th><th style="text-align:right">ENVÍO</th>
+        <th style="text-align:right">NETO</th><th>%COM</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
     ${paid.length>200?`<p style="font-size:12px;color:var(--gray);padding:10px 12px">Mostrando 200 de ${paid.length}. Descarga Excel para ver todas.</p>`:''}
   `;
-  show('dash');
-  $('dash').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── VISTA POR PRODUCTO ─────────────────────────────────────────────────── */
+function renderProductos(paid){
+  // Agrupar por item_id + título
+  const mapa = {};
+  paid.forEach(o=>{
+    const item = o.order_items?.[0];
+    if(!item) return;
+    const id    = item.item?.id || 'SIN_ID';
+    const title = item.item?.title || 'Sin título';
+    const lt    = item.listing_type_id || 'gold_premium';
+    const qty   = item.quantity || 0;
+    const total = o.total_amount || 0;
+    const {com,iva} = comision(lt, total);
+    const env_cost  = o.shipping_amount || o.shipping?.cost || 0;
+    const neto      = total - com - iva - env_cost;
+
+    if(!mapa[id]){
+      mapa[id]={id, title, lt, qty:0, ventas:0, coms:0, iva:0, envios:0, neto:0, ordenes:0};
+    }
+    mapa[id].qty     += qty;
+    mapa[id].ventas  += total;
+    mapa[id].coms    += com;
+    mapa[id].iva     += iva;
+    mapa[id].envios  += env_cost;
+    mapa[id].neto    += neto;
+    mapa[id].ordenes += 1;
+  });
+
+  const productos = Object.values(mapa).sort((a,b)=>b.neto-a.neto);
+
+  if(!productos.length){
+    $('tabla-productos').innerHTML='<div class="empty-state">Sin datos de productos.</div>';
+    $('prod-costos').innerHTML='';
+    return;
+  }
+
+  // Gráfica top 8 productos por neto
+  const top8 = productos.slice(0,8);
+  const labelsP = top8.map(p=>p.title.slice(0,20)+(p.title.length>20?'…':''));
+  if(charts.productos) charts.productos.destroy();
+  charts.productos=new Chart($('chart-prod'),{
+    type:'bar',
+    data:{
+      labels:labelsP,
+      datasets:[
+        {label:'Ingreso neto',data:top8.map(p=>parseFloat(p.neto.toFixed(2))),backgroundColor:'rgba(0,200,150,.6)',borderColor:'rgba(0,200,150,.9)',borderWidth:1,borderRadius:4},
+        {label:'Ventas brutas',data:top8.map(p=>parseFloat(p.ventas.toFixed(2))),backgroundColor:'rgba(0,131,143,.35)',borderColor:'rgba(0,188,212,.6)',borderWidth:1,borderRadius:4}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#A8BACC',font:{size:11}}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{y:{ticks:{color:'#7B8EAB',callback:v=>'$'+v.toLocaleString('es-MX')},grid:{color:'rgba(255,255,255,.05)'}},x:{ticks:{color:'#7B8EAB',maxRotation:30,font:{size:10}},grid:{display:false}}}}
+  });
+
+  // Barras de costos por producto (top 5)
+  const top5=productos.slice(0,5);
+  $('prod-costos').innerHTML=top5.map(p=>`
+    <div class="bar-row">
+      <div class="bar-meta">
+        <span class="bar-meta-label" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(p.title)}">${esc(p.title.slice(0,22)+(p.title.length>22?'…':''))}</span>
+        <span class="bar-meta-val">${fmtP(p.ventas>0?(p.coms+p.iva+p.envios)/p.ventas*100:0)}</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${Math.min((p.ventas>0?(p.coms+p.iva+p.envios)/p.ventas*100:0)*3,100).toFixed(1)}%"></div></div>
+    </div>`).join('');
+
+  // Tabla resumen por producto
+  const rows=productos.map((p,i)=>`<tr>
+    <td style="text-align:right;color:var(--gray)">${i+1}</td>
+    <td style="font-size:11px;font-family:monospace;color:var(--teal-b)">${esc(p.id)}</td>
+    <td title="${esc(p.title)}">${esc(p.title.slice(0,30)+(p.title.length>30?'…':''))}</td>
+    <td style="text-align:right">${p.ordenes}</td>
+    <td style="text-align:right">${p.qty}</td>
+    <td style="text-align:right">${fmt(p.ventas)}</td>
+    <td style="text-align:right;color:#E05252">${fmt(p.coms+p.iva)}</td>
+    <td style="text-align:right;color:#7B8EAB">${fmt(p.envios)}</td>
+    <td style="text-align:right;color:#00C896">${fmt(p.neto)}</td>
+    <td><span class="tag ${p.neto>=0?'tag-ok':'tag-warn'}">${fmtP(p.ventas>0?p.neto/p.ventas*100:0)}</span></td>
+  </tr>`).join('');
+  $('tabla-productos').innerHTML=`
+    <table>
+      <thead><tr>
+        <th>#</th><th>ID ML</th><th>PRODUCTO</th>
+        <th style="text-align:right">ÓRDENES</th><th style="text-align:right">UNIDADES</th>
+        <th style="text-align:right">VENTA BRUTA</th><th style="text-align:right">COMISIÓN+IVA</th>
+        <th style="text-align:right">ENVÍOS</th><th style="text-align:right">NETO</th><th>MARGEN</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
 }
 
 /* ── EXPORTAR EXCEL ─────────────────────────────────────────────────────── */
@@ -451,51 +670,99 @@ function exportar(){
   if(!S.ordenes.length){ showAlert('No hay datos para exportar.','err'); return; }
   const paid=S.ordenes.filter(o=>o.status==='paid');
   const wb=XLSX.utils.book_new();
-  let ventas=0,coms=0,ivaT=0;
-  const rows=paid.map(o=>{
+
+  // Hoja 1: Órdenes detalladas
+  let ventas=0,coms=0,ivaT=0,enviosT=0;
+  const rowsOrd=paid.map(o=>{
     const lt=o.order_items?.[0]?.listing_type_id||'gold_premium';
     const {pct,com,iva}=comision(lt,o.total_amount||0);
-    ventas+=o.total_amount||0; coms+=com; ivaT+=iva;
+    const env_cost=o.shipping_amount||o.shipping?.cost||0;
+    ventas+=o.total_amount||0; coms+=com; ivaT+=iva; enviosT+=env_cost;
     return {
       'ID Orden':String(o.id), 'Fecha':String(o.date_created?.slice(0,19)||''),
       'Estado':String(o.status||''), 'Producto':String(o.order_items?.[0]?.item?.title||''),
       'SKU':String(o.order_items?.[0]?.item?.seller_sku||''),
+      'ID Item ML':String(o.order_items?.[0]?.item?.id||''),
       'Cantidad':o.order_items?.[0]?.quantity||0,
       'Precio unitario':o.order_items?.[0]?.unit_price||0,
       'Total venta':o.total_amount||0, 'Tipo listing':String(lt),
       'Comisión %':parseFloat((pct*100).toFixed(1)),
       'Comisión $':parseFloat(com.toFixed(2)),
       'IVA comisión':parseFloat(iva.toFixed(2)),
-      'Ingreso neto':parseFloat(((o.total_amount||0)-com-iva).toFixed(2)),
+      'Costo envío':parseFloat(env_cost.toFixed(2)),
+      'Ingreso neto':parseFloat(((o.total_amount||0)-com-iva-env_cost).toFixed(2)),
       'Fulfillment':o.tags?.includes('fulfillment')?'FULL':'Normal'
     };
   });
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Órdenes');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rowsOrd),'Órdenes');
+
+  // Hoja 2: Resumen por producto
+  const mapa={};
+  paid.forEach(o=>{
+    const item=o.order_items?.[0];
+    if(!item) return;
+    const id=item.item?.id||'SIN_ID';
+    const title=item.item?.title||'Sin título';
+    const lt=item.listing_type_id||'gold_premium';
+    const {pct,com,iva}=comision(lt,o.total_amount||0);
+    const env_cost=o.shipping_amount||o.shipping?.cost||0;
+    if(!mapa[id]) mapa[id]={id,title,lt,qty:0,ventas:0,coms:0,iva:0,envios:0,neto:0,ordenes:0};
+    mapa[id].qty+=item.quantity||0;
+    mapa[id].ventas+=o.total_amount||0;
+    mapa[id].coms+=com; mapa[id].iva+=iva;
+    mapa[id].envios+=env_cost;
+    mapa[id].neto+=(o.total_amount||0)-com-iva-env_cost;
+    mapa[id].ordenes+=1;
+  });
+  const rowsProd=Object.values(mapa).sort((a,b)=>b.neto-a.neto).map(p=>({
+    'ID Item ML':p.id, 'Producto':p.title, 'Tipo listing':p.lt,
+    'Órdenes':p.ordenes, 'Unidades vendidas':p.qty,
+    'Venta bruta':parseFloat(p.ventas.toFixed(2)),
+    'Comisiones ML':parseFloat(p.coms.toFixed(2)),
+    'IVA comisiones':parseFloat(p.iva.toFixed(2)),
+    'Costos envío':parseFloat(p.envios.toFixed(2)),
+    'Total costos':parseFloat((p.coms+p.iva+p.envios).toFixed(2)),
+    'Ingreso neto':parseFloat(p.neto.toFixed(2)),
+    'Margen %':parseFloat((p.ventas>0?p.neto/p.ventas*100:0).toFixed(1))
+  }));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rowsProd),'Por Producto');
+
+  // Hoja 3: Resumen ejecutivo
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([{
-    'Período':`${$('inp-ini').value} al ${$('inp-fin').value}`,
-    'Total órdenes':paid.length,
+    'Período':`${S.rango?.fi||''} al ${S.rango?.ff||''}`,
+    'Total órdenes pagadas':paid.length,
     'Ventas brutas':parseFloat(ventas.toFixed(2)),
     'Comisiones ML':parseFloat(coms.toFixed(2)),
     'IVA':parseFloat(ivaT.toFixed(2)),
-    'Costos totales':parseFloat((coms+ivaT).toFixed(2)),
-    'Ingreso neto':parseFloat((ventas-coms-ivaT).toFixed(2)),
-    'Margen %':parseFloat(((ventas>0?(ventas-coms-ivaT)/ventas:0)*100).toFixed(1)),
+    'Costos envío':parseFloat(enviosT.toFixed(2)),
+    'Total costos plataforma':parseFloat((coms+ivaT+enviosT).toFixed(2)),
+    'Ingreso neto':parseFloat((ventas-coms-ivaT-enviosT).toFixed(2)),
+    'Margen %':parseFloat(((ventas>0?(ventas-coms-ivaT-enviosT)/ventas:0)*100).toFixed(1)),
     'Generado por':'Nexo Analytics'
-  }]),'Resumen');
-  XLSX.writeFile(wb,`NexoAnalytics_${$('inp-ini').value}_${$('inp-fin').value}.xlsx`);
-  showAlert('✓ Excel descargado correctamente.','ok');
+  }]),'Resumen Ejecutivo');
+
+  XLSX.writeFile(wb,`NexoAnalytics_${S.rango?.fi||'inicio'}_${S.rango?.ff||'fin'}.xlsx`);
+  showAlert('✓ Excel descargado (3 hojas: Órdenes, Por Producto, Resumen).','ok');
 }
 
 /* ── INIT ───────────────────────────────────────────────────────────────── */
 (function(){
+  // Escuchar cambios en campos de fecha personalizados
+  ['inp-ini','inp-fin'].forEach(id=>{
+    const el=$(id);
+    if(el) el.addEventListener('change',()=>{
+      rango.ini=$('inp-ini').value;
+      rango.fin=$('inp-fin').value;
+    });
+  });
+
   const sid  = sessionStorage.getItem('na_sid');
   const uid  = sessionStorage.getItem('na_uid');
   const urlP = new URLSearchParams(window.location.search);
   const code = urlP.get('auth_code') || sessionStorage.getItem('na_auth_code');
-  /* SEGURIDAD: limpiar auth_code de la URL inmediatamente tras capturarlo */
-  if(urlP.has('auth_code')) window.history.replaceState({}, document.title, window.location.pathname);
+  if(urlP.has('auth_code')) window.history.replaceState({},document.title,window.location.pathname);
   if(sid && uid){ S.sid=sid; S.uid=uid; conectado(); }
-  else if(code){ sessionStorage.setItem('na_auth_code', code); intercambiarToken(code); }
+  else if(code){ sessionStorage.setItem('na_auth_code',code); intercambiarToken(code); }
 })();
 </script>
 </body>
