@@ -99,70 +99,75 @@
 
     async function run() {
       if (error) {
-        show('error', (errorDesc ? decodeURIComponent(errorDesc.replace(/\+/g,' ')) : error));
+        const msg = errorDesc ? decodeURIComponent(errorDesc.replace(/\+/g, ' ')) : error;
+        showError(msg);
         return;
       }
       if (!code) {
-        show('error', 'No se recibió código de autorización. Intenta de nuevo desde la app.');
+        showError('No se recibió código de autorización. Intenta de nuevo desde la app.');
         return;
       }
-      const clientId     = sessionStorage.getItem('na_client_id') || '';
-      const clientSecret = sessionStorage.getItem('na_client_secret') || '';
-      if (!clientId || !clientSecret) {
-        sessionStorage.setItem('na_auth_code', code);
-        stepDone(2, 'Código recibido');
-        stepActive(3, 'Redirigiendo a la app...');
-        setTimeout(() => { window.location.href = APP_URL + '?auth_code=' + encodeURIComponent(code); }, 800);
-        return;
-      }
+
+      // Flujo seguro: el Worker tiene client_id y client_secret como variables de entorno.
+      // El frontend solo envía el code — nunca maneja credenciales ni tokens reales.
       try {
         const resp = await fetch(WORKER_URL, {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({
-            grant_type: 'authorization_code',
-            client_id: clientId,
-            client_secret: clientSecret,
-            code: code,
-            redirect_uri: 'https://nexoanalytics.github.io/callback'
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ grant_type: 'authorization_code', code })
         });
         const data = await resp.json();
-        if (data.access_token) {
-          sessionStorage.setItem('na_access_token',  data.access_token);
-          sessionStorage.setItem('na_refresh_token', data.refresh_token || '');
-          sessionStorage.setItem('na_user_id',       String(data.user_id || ''));
-          stepDone(2, 'Token obtenido');
+
+        if (data.session_id) {
+          // Guardar solo el session_id opaco — el token real queda en el Worker (KV)
+          sessionStorage.setItem('na_sid', data.session_id);
+          sessionStorage.setItem('na_uid', String(data.user_id || ''));
+          sessionStorage.removeItem('na_oauth_pending');
+
+          stepDone(2, 'Sesión establecida');
           stepActive(3, 'Redirigiendo al dashboard...');
           document.getElementById('view-loading').style.display = 'none';
           document.getElementById('view-success').style.display = 'block';
+
           let s = 3;
           const cd = document.getElementById('countdown');
           const t = setInterval(() => {
-            s--; if(cd) cd.textContent = s;
-            if(s <= 0){ clearInterval(t); window.location.href = APP_URL + '?auth=ok&user_id=' + data.user_id; }
+            s--;
+            if (cd) cd.textContent = s;
+            if (s <= 0) { clearInterval(t); window.location.href = APP_URL; }
           }, 1000);
         } else {
-          throw new Error(data.message || data.error || JSON.stringify(data));
+          throw new Error(data.error || data.message || 'Respuesta inesperada del servidor.');
         }
-      } catch(e) { show('error', e.message); }
+      } catch (e) {
+        showError(e.message);
+      }
     }
 
-    function show(type, msg) {
+    function showError(msg) {
       document.getElementById('view-loading').style.display = 'none';
-      document.getElementById('view-' + type).style.display = 'block';
-      if (type === 'error') document.getElementById('error-detail').innerHTML = '<strong>Error:</strong> ' + msg;
+      document.getElementById('view-error').style.display = 'block';
+      // textContent en lugar de innerHTML para evitar XSS
+      const box = document.getElementById('error-detail');
+      box.textContent = 'Error: ' + msg;
     }
+
     function stepDone(n, t) {
-      const d = document.getElementById('dot-'+n), x = document.getElementById('txt-'+n);
-      if(d){ d.className='step-dot dot-done'; d.innerHTML='✓'; }
-      if(x){ x.className='step-text-done'; if(t) x.textContent=t; }
+      const d = document.getElementById('dot-' + n), x = document.getElementById('txt-' + n);
+      if (d) { d.className = 'step-dot dot-done'; d.textContent = '✓'; }
+      if (x) { x.className = 'step-text-done'; if (t) x.textContent = t; }
     }
     function stepActive(n, t) {
-      const d = document.getElementById('dot-'+n), x = document.getElementById('txt-'+n);
-      if(d){ d.className='step-dot dot-active'; d.innerHTML='<div style="width:10px;height:10px;border:1.5px solid;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite"></div>'; }
-      if(x){ x.className='step-text-active'; if(t) x.textContent=t; }
+      const d = document.getElementById('dot-' + n), x = document.getElementById('txt-' + n);
+      if (d) {
+        d.className = 'step-dot dot-active';
+        const spin = document.createElement('div');
+        spin.style.cssText = 'width:10px;height:10px;border:1.5px solid;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite';
+        d.replaceChildren(spin);
+      }
+      if (x) { x.className = 'step-text-active'; if (t) x.textContent = t; }
     }
+
     run();
   </script>
 </body>
